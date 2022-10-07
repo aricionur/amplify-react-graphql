@@ -3,23 +3,11 @@ import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { API, Storage } from "aws-amplify";
 import { Button, Flex, Heading, Image, Text, TextField, View, withAuthenticator } from "@aws-amplify/ui-react";
-// import { listNotes } from "./graphql/queries";
-// import {
-//   createNote as createNoteMutation,
-//   deleteNote as deleteNoteMutation,
-// } from "./graphql/mutations";
-
-const listNotes = "query MyQuery { listNotes { items { createdAt description id name updatedAt }}}"
-
-const createNoteMutation = `
-  mutation CreateNoteInput($input: CreateNoteInput!) {
-    createNote(input: $input) {
-      createdAt description id name updatedAt
-    }
-  }
-`
-
-
+import { listNotes } from "./graphql/queries";
+import {
+  createNote as createNoteMutation,
+  deleteNote as deleteNoteMutation,
+} from "./graphql/mutations";
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
@@ -64,18 +52,21 @@ const App = ({ signOut }) => {
   }
 
   async function deleteNote({ id, name }) {
-    // const newNotes = notes.filter((note) => note.id !== id);
-    // setNotes(newNotes);
-    // await Storage.remove(name);
-    // await API.graphql({
-    //   query: deleteNoteMutation,
-    //   variables: { input: { id } },
-    // });
+    const newNotes = notes.filter((note) => note.id !== id);
+    setNotes(newNotes);
+    await Storage.remove(name);
+    await API.graphql({
+      query: deleteNoteMutation,
+      variables: { input: { id } },
+    });
   }
 
   return (
     <View className="App">
-      <Heading level={1}>Notes App</Heading>
+      <Flex direction="column" justifyContent="center" marginInline={"relative.large"} >
+        <Heading level={1}>Notes App</Heading>
+        <Heading level={6}  >(Implemented by Onur)</Heading>
+      </Flex>
       <View as="form" margin="3rem 0" onSubmit={createNote}>
         <Flex direction="row" justifyContent="center">
           <TextField
